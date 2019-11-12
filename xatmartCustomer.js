@@ -28,7 +28,8 @@ function welcome() {
             if (answer.Welcome === "Yea, what'd ya got?") {
                 inventory();
             } else (answer.Welcome === "Nah, leave me alone!")
-            boiBye();
+            console.log("Shit it's the cops!")
+            connection.end();
         })
 };
 
@@ -41,32 +42,38 @@ function inventory() {
             console.log(divider);
             console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].price);
         };
-        customerChooses()
+        orderPlacement();
     });
 };
 
-function customerChooses() {
-    inquirer
-        .prompt([{
-            name: "inputId",
-            type: "input",
-            message: "Wha'ya wanna buy, what's the id number?"
-        }, {
-            name: "inputQuantity",
-            type: "input",
-            message: "How many ya want?"
-        }]).then(function (answer) {
-            console.log("So you want " + answers.Quantity + " # " + answers.inputId);
-            connection.query("SELECT * FROM products WHERE item_id=?", [answer.inputId], function (err, results) {
+function orderPlacement() {
+    inquirer.prompt([{
+        name: "inputId",
+        type: "input",
+        message: "Wha'ya wanna buy, what's the id number?"
+    }, {
+        name: "inputQuantity",
+        type: "input",
+        message: "How many ya want?"
+    }])
+        .then(function (answer) {
+            //selects from db the chosen id
+            var query = "SELECT product_name, price FROM products WHERE item_id = " + answer.inputId;
+            connection.query(query, function (err, res) {
                 if (err) throw err;
-                console.log(results);
+                console.log(res);
+                console.log("Your total is" + results[0].price * answers.inputQuantity);
+                //checks if there is enough stock
+                if (res[0].stock_quantity > answers.inputQuantity) {
+                    //subtracts purchase
+                    var stockUpdate = results[0].stock_quantity - answers.inputQuantity
+                    //updates stock
+                    console.log(stockUpdate);
+                    connection.query("UPDATE products SET ? WHERE ?", [
+                        { stock_quantity: stockUpdate },
+                        { item_id: answers.inputId }
+                    ]);
+                };
             });
         });
-};
-// boiBye();
-
-//ends connection
-function boiBye() {
-    console.log("Shit it's the cops!")
-    connection.end();
 };
