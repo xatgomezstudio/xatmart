@@ -3,21 +3,14 @@ var inquirer = require("inquirer");
 
 var connection = mysql.createConnection({
     host: "localhost",
-
-    // Your port; if not 3306
     port: 3306,
-
-    // Your username
     user: "root",
-
-    // Your password
     password: "Philly2019",
     database: "xat_martDB"
 });
 
 //console spacer/divider
 var divider = "\n\n------------------------------------------------------------\n\n";
-
 
 connection.connect(function (err) {
     if (err) throw err;
@@ -41,11 +34,11 @@ function welcome() {
 
 //products listed
 function inventory() {
-    console.log("This is my haul today...\n");
-    connection.query("SELECT * FROM products", function (err, res, fields) {
+    console.log("This is my haul today...");
+    connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
         // Log all results of the SELECT statement
-        console.log(divider + result + divider);
+        console.log(divider + results + divider);
     });
     // customerChooses();
 }
@@ -71,7 +64,7 @@ function inventory() {
 // };
 
 // //ends connection
-// function boiBye() {
-//     console.log("Shit it's the cops!")
-//     connection.end();
-// }
+function boiBye() {
+    console.log("Shit it's the cops!")
+    connection.end();
+};
