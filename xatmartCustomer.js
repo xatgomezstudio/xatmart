@@ -21,64 +21,57 @@ var divider = "\n\n------------------------------------------------------------\
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId + "\n");
+    welcome();
 })
-
-//global variables
-var inputName = "";
-var inputPrice = "";
-var inputQuantity = "";
-
 
 function welcome() {
     inquirer
         .prompt({
             name: "Welcome",
-            type: "Checkbox",
+            type: "list",
             message: "Quick and incognito, what do you want?",
-            choices: ["Yea, what'cha got in that coat?", "I'm looking for something specific...", "Nah man leave me alone!!!"]
-        })
-        .then(function (answer) {
-            if (answer.welcome === "What cha got in that coat?") {
+            choices: ["STUFF", "NOTHIN"]
+        }).then(function (answer) {
+            if (answer.Welcome === "STUFF") {
                 inventory();
-            } else if(answer.greeting === "I'm looking for something specific...") {
-                customerChooses();
-            } else (answer.greeting === "Nah man leave me alone!!!")
-                connection.end();
+            } else (answer.Welcome === "NOTHIN")
+            // boiBye();
         })
 };
-welcome();
 
 //products listed
 function inventory() {
-    console.log("Selecting all products...\n");
-    connection.query("SELECT * FROM products", function (err, res) {
+    console.log("This is my haul today...\n");
+    connection.query("SELECT * FROM products", function (err, res, fields) {
         if (err) throw err;
         // Log all results of the SELECT statement
-        console.log(res);
+        console.log(divider + result + divider);
     });
+    // customerChooses();
 }
 
-function customerChooses() {
-    inquirer
-        .prompt([{
-            name: "inputName",
-            type: "Input",
-            message: "What do you want to buy?",
-        }])
-        .prompt([{
-            name: "inputQuantity",
-            type: "number",
-            message: "How many do you want?",
-        }])
-        .prompt([{
-            name: "inputPrice",
-            type: "number",
-            message: "How much money do you have??",
-        }])
-}
-//ends connection
-function boiBye() {
-    console.log("Shit it's the cops!")
-    connection.end();
-}
+// function customerChooses() {
+//     inquirer
+//         .prompt([{
+//             name: "inputId",
+//             type: "input",
+//             message: "Wha'ya wanna buy, what's the id number?"
+//         }, {
+//             name: "inputQuantity",
+//             type: "input",
+//             message: "How many do you want?"
+//         }]).then(function (answer) {
+//             console.log("So you want " + answers.Quantity + " # " + answers.inputId);
+//             connection.query("SELECT * FROM products WHERE item_id=?", [answer.inputId], function (err, results) {
+//                 if (err) throw err;
+//                 console.log(results);
+//             });
+//         });
+//     boiBye();
+// };
+
+// //ends connection
+// function boiBye() {
+//     console.log("Shit it's the cops!")
+//     connection.end();
+// }
